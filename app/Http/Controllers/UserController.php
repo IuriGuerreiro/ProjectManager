@@ -10,8 +10,9 @@ use App\Models\Role;
 use App\Models\userRoles;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Hash;
 
-class userController extends Controller
+class UserController extends Controller
 {
 
     use SoftDeletes;
@@ -32,15 +33,25 @@ class userController extends Controller
         $user = new Users();
         $user->name = $request->input('inputUserName');
         $user->email = $request->input('inputUserEmail');
-        $user->password = $request->input('inputUserPassword');
+        $user->password = Hash::make($request->input('inputUserPassword'));
         $user->save();
 
         return redirect()->route('users.list');
     }
     public function update(request $request , $id){
-        
-        
-        return view('users.index');
+        $user = Users::findOrFail($id);
+
+        $user->name = $request->input('inputUserName');
+        $user->email = $request->input('inputUserEmail');
+
+        // Only update password if provided
+        if ($request->filled('inputUserPassword')) {
+            $user->password = Hash::make($request->input('inputUserPassword'));
+        }
+
+        $user->save();
+
+        return redirect()->route('users.view', ['id' => $id]);
     }
 
     public function edit($id){

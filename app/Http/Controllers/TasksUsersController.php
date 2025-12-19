@@ -9,7 +9,7 @@ use App\Models\Taskusers;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class TasksusersController extends Controller
+class TasksUsersController extends Controller
 {
     use SoftDeletes;
 

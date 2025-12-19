@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  ProjectManager-db:
+    image: mysql:8.0
+    container_name: ProjectManager-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: project_manager
+      MYSQL_USER: project_user
+      MYSQL_PASSWORD: project_password
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - project-manager-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Laravel Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ProjectManager-app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+      - ./storage:/var/www/html/storage
+      - ./bootstrap/cache:/var/www/html/bootstrap/cache
+    ports:
+      - "8005:8000"
+    environment:
+      - DB_HOST=ProjectManager-db
+      - DB_PORT=3306
+      - DB_DATABASE=project_manager
+      - DB_USERNAME=project_user
+      - DB_PASSWORD=project_password
+    depends_on:
+      ProjectManager-db:
+        condition: service_healthy
+    networks:
+      - project-manager-network
+    command: php artisan serve --host=0.0.0.0 --port=8000
+
+  # Node.js for Vite (development)
+  node:
+    image: node:20-alpine
+    container_name: ProjectManager-node
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "5173:5173"
+    networks:
+      - project-manager-network
+    command: sh -c "npm install && npm run dev -- --host"
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  project-manager-network:
+    driver: bridge

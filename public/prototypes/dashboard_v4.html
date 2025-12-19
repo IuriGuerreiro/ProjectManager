@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option 4: Glassmorphism</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .glass-dark {
+             background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="text-white font-sans antialiased p-8 flex items-center justify-center h-screen">
+
+    <div class="glass w-full max-w-6xl h-[90vh] rounded-3xl shadow-2xl flex overflow-hidden relative">
+        
+        <!-- Sidebar -->
+        <aside class="w-20 lg:w-64 glass-dark flex flex-col items-center lg:items-start py-8">
+            <div class="px-6 mb-10">
+                <i class="fas fa-cube text-3xl"></i>
+            </div>
+            
+            <nav class="w-full space-y-4">
+                <a href="#" class="block px-6 py-3 border-r-4 border-white bg-white/10">
+                    <i class="fas fa-home w-6"></i> <span class="hidden lg:inline ml-2 font-medium">Dashboard</span>
+                </a>
+                <a href="#" class="block px-6 py-3 border-r-4 border-transparent hover:bg-white/5 transition">
+                    <i class="fas fa-folder-open w-6"></i> <span class="hidden lg:inline ml-2 font-medium opacity-80">Projects</span>
+                </a>
+                <a href="#" class="block px-6 py-3 border-r-4 border-transparent hover:bg-white/5 transition">
+                    <i class="fas fa-users w-6"></i> <span class="hidden lg:inline ml-2 font-medium opacity-80">Team</span>
+                </a>
+                <a href="#" class="block px-6 py-3 border-r-4 border-transparent hover:bg-white/5 transition">
+                    <i class="fas fa-cog w-6"></i> <span class="hidden lg:inline ml-2 font-medium opacity-80">Settings</span>
+                </a>
+            </nav>
+
+             <div class="mt-auto px-6">
+                 <button class="bg-white/20 hover:bg-white/30 p-2 rounded-xl transition w-full">
+                     <i class="fas fa-sign-out-alt"></i> <span class="hidden lg:inline ml-2">Logout</span>
+                 </button>
+             </div>
+        </aside>
+
+        <!-- Content -->
+        <main class="flex-1 p-8 overflow-y-auto">
+            <header class="flex justify-between items-center mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold">Hello, Designer</h1>
+                    <p class="opacity-70">Welcome to your creative space.</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="glass px-4 py-2 rounded-full flex items-center">
+                        <i class="fas fa-search opacity-60 mr-2"></i>
+                        <input type="text" placeholder="Search..." class="bg-transparent border-none focus:outline-none placeholder-white/60 text-sm">
+                    </div>
+                    <img src="https://ui-avatars.com/api/?name=Designer&background=random" class="w-10 h-10 rounded-full border-2 border-white/50 shadow-md">
+                </div>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="glass p-6 rounded-2xl relative overflow-hidden group hover:bg-white/30 transition">
+                    <div class="absolute -right-4 -top-4 w-24 h-24 bg-purple-500 rounded-full blur-2xl opacity-40"></div>
+                    <h3 class="text-lg font-semibold mb-1">In Progress</h3>
+                    <div class="text-4xl font-bold">8</div>
+                    <p class="text-xs mt-2 opacity-70">Projects active</p>
+                </div>
+                 <div class="glass p-6 rounded-2xl relative overflow-hidden hover:bg-white/30 transition">
+                     <div class="absolute -right-4 -top-4 w-24 h-24 bg-blue-500 rounded-full blur-2xl opacity-40"></div>
+                    <h3 class="text-lg font-semibold mb-1">Completed</h3>
+                    <div class="text-4xl font-bold">24</div>
+                    <p class="text-xs mt-2 opacity-70">This month</p>
+                </div>
+                 <div class="glass p-6 rounded-2xl relative overflow-hidden hover:bg-white/30 transition">
+                     <div class="absolute -right-4 -top-4 w-24 h-24 bg-pink-500 rounded-full blur-2xl opacity-40"></div>
+                    <h3 class="text-lg font-semibold mb-1">Upcoming</h3>
+                    <div class="text-4xl font-bold">3</div>
+                    <p class="text-xs mt-2 opacity-70">Starting soon</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Project Cards -->
+                <div class="glass p-6 rounded-2xl">
+                    <h3 class="text-xl font-bold mb-4">Active Projects</h3>
+                    <div class="space-y-4">
+                        <div class="bg-white/10 p-4 rounded-xl flex justify-between items-center hover:bg-white/20 transition cursor-pointer">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-lg bg-orange-400 flex items-center justify-center"><i class="fas fa-mobile-alt"></i></div>
+                                <div>
+                                    <h4 class="font-bold">App Interface</h4>
+                                    <p class="text-xs opacity-70">Due in 2 days</p>
+                                </div>
+                            </div>
+                            <div class="w-12 h-12 relative flex items-center justify-center">
+                                <svg class="w-full h-full transform -rotate-90">
+                                    <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="4" fill="transparent" class="text-white/10" />
+                                    <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="4" fill="transparent" class="text-orange-300" stroke-dasharray="125" stroke-dashoffset="30" />
+                                </svg>
+                                <span class="absolute text-xs">75%</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-white/10 p-4 rounded-xl flex justify-between items-center hover:bg-white/20 transition cursor-pointer">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-lg bg-green-400 flex items-center justify-center"><i class="fas fa-globe"></i></div>
+                                <div>
+                                    <h4 class="font-bold">Web Platform</h4>
+                                    <p class="text-xs opacity-70">Due in 1 week</p>
+                                </div>
+                            </div>
+                            <div class="w-12 h-12 relative flex items-center justify-center">
+                                <svg class="w-full h-full transform -rotate-90">
+                                    <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="4" fill="transparent" class="text-white/10" />
+                                    <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="4" fill="transparent" class="text-green-300" stroke-dasharray="125" stroke-dashoffset="60" />
+                                </svg>
+                                <span class="absolute text-xs">50%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team/Chat -->
+                <div class="glass p-6 rounded-2xl flex flex-col">
+                    <h3 class="text-xl font-bold mb-4">Team Activity</h3>
+                    <div class="flex-1 space-y-4 overflow-y-auto max-h-48 pr-2">
+                         <div class="flex gap-3">
+                            <img src="https://ui-avatars.com/api/?name=John+Doe&background=random" class="w-8 h-8 rounded-full mt-1">
+                            <div class="bg-white/10 p-3 rounded-lg rounded-tl-none text-sm">
+                                <span class="font-bold block text-xs opacity-60 mb-1">John Doe</span>
+                                Uploaded the new assets for the homepage.
+                            </div>
+                        </div>
+                        <div class="flex gap-3 flex-row-reverse">
+                            <img src="https://ui-avatars.com/api/?name=Me&background=random" class="w-8 h-8 rounded-full mt-1">
+                            <div class="bg-white/20 p-3 rounded-lg rounded-tr-none text-sm">
+                                <span class="font-bold block text-xs opacity-60 mb-1 text-right">You</span>
+                                Great! I'll check them now.
+                            </div>
+                        </div>
+                         <div class="flex gap-3">
+                            <img src="https://ui-avatars.com/api/?name=Sarah&background=random" class="w-8 h-8 rounded-full mt-1">
+                            <div class="bg-white/10 p-3 rounded-lg rounded-tl-none text-sm">
+                                <span class="font-bold block text-xs opacity-60 mb-1">Sarah</span>
+                                Can we schedule a meeting at 3 PM?
+                            </div>
+                        </div>
+                    </div>
+                     <div class="mt-4 relative">
+                        <input type="text" placeholder="Type a message..." class="w-full bg-white/10 rounded-full px-4 py-2 text-sm focus:outline-none focus:bg-white/20 placeholder-white/50">
+                        <button class="absolute right-2 top-1 w-8 h-8 rounded-full bg-white text-purple-600 flex items-center justify-center shadow-lg"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</body>
+</html>

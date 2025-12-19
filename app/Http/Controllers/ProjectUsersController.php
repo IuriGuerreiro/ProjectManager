@@ -8,7 +8,7 @@ use App\Models\Projectsusers;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ProjectusersController extends Controller
+class ProjectUsersController extends Controller
 {
     use SoftDeletes;
 
