@@ -13,6 +13,7 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     </head>
     <body class="font-sans antialiased bg-dark-bg text-dark-text min-h-screen flex items-center justify-center p-6">
         <div class="w-full max-w-md">
@@ -23,6 +24,34 @@
                 <h1 class="text-3xl font-bold text-white tracking-tight">ProjectMgr</h1>
                 <p class="text-dark-muted mt-2 text-sm">Sistema de Gestão de Projetos e Formações</p>
             </div>
+
+            <!-- Flash Messages -->
+            @if(session('success'))
+                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" class="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+                    <p class="text-sm text-green-400 text-center">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        {{ session('success') }}
+                    </p>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" class="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+                    <p class="text-sm text-red-400 text-center">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        {{ session('error') }}
+                    </p>
+                </div>
+            @endif
+
+            @if(session('info'))
+                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" class="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                    <p class="text-sm text-blue-400 text-center">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        {{ session('info') }}
+                    </p>
+                </div>
+            @endif
 
             <x-v5-card>
                 {{ $slot }}

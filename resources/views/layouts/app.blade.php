@@ -103,6 +103,34 @@
                 <main class="flex-1 relative overflow-y-auto focus:outline-none">
                     <div class="py-8">
                         <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+                            <!-- Flash Messages -->
+                            @if(session('success'))
+                                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" class="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+                                    <p class="text-sm text-green-400">
+                                        <i class="fas fa-check-circle mr-2"></i>
+                                        {{ session('success') }}
+                                    </p>
+                                </div>
+                            @endif
+
+                            @if(session('error'))
+                                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" class="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+                                    <p class="text-sm text-red-400">
+                                        <i class="fas fa-exclamation-circle mr-2"></i>
+                                        {{ session('error') }}
+                                    </p>
+                                </div>
+                            @endif
+
+                            @if(session('info'))
+                                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" class="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                                    <p class="text-sm text-blue-400">
+                                        <i class="fas fa-info-circle mr-2"></i>
+                                        {{ session('info') }}
+                                    </p>
+                                </div>
+                            @endif
+
                             @yield('content')
                         </div>
                     </div>

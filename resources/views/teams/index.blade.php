@@ -27,7 +27,9 @@
                     </td>
                     <td class="px-6 py-4 text-dark-muted text-sm">{{ $team->team_function ?? "--" }}</td>
                     <td class="px-6 py-4">
-                        <span class="text-xs bg-dark-bg px-2 py-1 rounded border border-dark-border text-dark-muted">N/A</span>
+                        <span class="text-xs bg-dark-bg px-2 py-1 rounded border border-dark-border text-dark-muted">
+                            <i class="fas fa-users mr-1"></i>{{ $team->members_count ?? 0 }} {{ $team->members_count == 1 ? 'membro' : 'membros' }}
+                        </span>
                     </td>
                     <td class="px-6 py-4 text-right space-x-2">
                         <a href="{{ route('teams.view', ['team_id' => $team->id]) }}" class="text-dark-muted hover:text-primary-400 transition">

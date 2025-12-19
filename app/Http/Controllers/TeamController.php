@@ -8,13 +8,21 @@ use App\Models\Teams_users;
 use App\Models\Teams_projects;
 use App\Models\Users;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 class TeamController extends Controller
 {
     use SoftDeletes;
 
-    public function index(){    
-        $teams = Teams::all();
+    public function index(){
+        // Only show teams where the current user is a member
+        $teams = Teams::whereIn('id', function($query) {
+            $query->select('team_id')
+                ->from('teams_users')
+                ->where('user_id', Auth::id());
+        })
+        ->withCount('users as members_count')
+        ->get();
 
         return view('teams.index', ['teams' => $teams]);
     }
@@ -30,9 +38,15 @@ class TeamController extends Controller
         $team = new Teams();
 
         $team->team_designation = $request->inputTeamDesignation;
-        $team->team_function = $request->inputTeamfunction; 
+        $team->team_function = $request->inputTeamfunction;
 
         $team->save();
+
+        // Automatically add the creator to the team
+        Teams_users::create([
+            'team_id' => $team->id,
+            'user_id' => Auth::id(),
+        ]);
 
         return redirect()->route('teams.list');
     }
@@ -115,7 +129,62 @@ class TeamController extends Controller
     public function removerUser($id){
         $team_user = Teams_users::findOrFail($id);
         $team_user->delete();
-        
+
         return redirect()->route('teams.list');
+    }
+
+    public function showInvite($token)
+    {
+        $team = Teams::where('invite_token', $token)->firstOrFail();
+
+        // Check if invite is expired
+        if ($team->isInviteExpired()) {
+            return view('teams.invite-expired', compact('team'));
+        }
+
+        // Check if user is already a member
+        $isMember = Teams_users::where('team_id', $team->id)
+            ->where('user_id', Auth::id())
+            ->exists();
+
+        return view('teams.invite', compact('team', 'isMember'));
+    }
+
+    public function joinViaInvite($token)
+    {
+        $team = Teams::where('invite_token', $token)->firstOrFail();
+
+        // Check if invite is expired
+        if ($team->isInviteExpired()) {
+            return redirect()->route('teams.list')
+                ->with('error', 'Este convite expirou.');
+        }
+
+        // Check if user is already a member
+        $exists = Teams_users::where('team_id', $team->id)
+            ->where('user_id', Auth::id())
+            ->exists();
+
+        if (!$exists) {
+            Teams_users::create([
+                'team_id' => $team->id,
+                'user_id' => Auth::id(),
+            ]);
+
+            return redirect()->route('teams.view', ['team_id' => $team->id])
+                ->with('success', 'Juntou-se à equipa com sucesso!');
+        }
+
+        return redirect()->route('teams.view', ['team_id' => $team->id])
+            ->with('info', 'Já é membro desta equipa.');
+    }
+
+    public function regenerateInviteToken($id)
+    {
+        $team = Teams::findOrFail($id);
+        $team->regenerateInviteToken();
+
+        return redirect()->route('teams.view', ['team_id' => $team->id])
+            ->with('success', 'Link de convite regenerado com sucesso!');
     }
 }

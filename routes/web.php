@@ -106,6 +106,11 @@ Route::middleware(['auth', 'verified', 'onboarding'])->group(function () {
         Route::get('/AdduserToProject/{team_id}', [TeamProjectController::class, 'addTeamToProject'])->name('teams.addTeamToProject');
         Route::post('/AdduserToProject/store/{user_id}', [TeamProjectController::class, 'storeTeamToProject'])->name('teams.storeTeamToProject');
         Route::get('/TeamFromProject/{Teams_project_id}', [TeamProjectController::class, 'remove'])->name('teams.removeProject');
+
+        // Invite functionality
+        Route::get('/invite/{token}', [TeamController::class, 'showInvite'])->name('teams.showInvite');
+        Route::post('/invite/{token}/join', [TeamController::class, 'joinViaInvite'])->name('teams.joinViaInvite');
+        Route::post('/regenerate-invite/{team_id}', [TeamController::class, 'regenerateInviteToken'])->name('teams.regenerateInvite');
     });
 
     // Trainings

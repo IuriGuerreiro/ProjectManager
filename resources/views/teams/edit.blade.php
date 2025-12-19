@@ -32,26 +32,107 @@
             </form>
         </x-v5-card>
 
+        <!-- Invite Link Section -->
+        <x-v5-card title="Link de Convite">
+            <div class="space-y-4">
+                <p class="text-sm text-dark-muted">
+                    <i class="fas fa-share-alt mr-2"></i>
+                    Partilhe este link para convidar outros utilizadores para a equipa
+                </p>
+
+                @if($team->isInviteValid())
+                    <div class="flex gap-2">
+                        <input
+                            type="text"
+                            id="inviteLink"
+                            value="{{ route('teams.showInvite', ['token' => $team->invite_token]) }}"
+                            readonly
+                            class="flex-1 px-4 py-2 bg-dark-bg border border-dark-border rounded-lg text-sm text-white focus:outline-none focus:border-primary-500 font-mono"
+                        >
+                        <button
+                            onclick="copyInviteLink()"
+                            class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition duration-200 flex items-center gap-2"
+                        >
+                            <i class="fas fa-copy"></i>
+                            <span id="copyButtonText">Copiar</span>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-2">
+                        <p class="text-xs text-dark-muted">
+                            <i class="fas fa-clock mr-1"></i>
+                            Expira em: <span class="text-primary-400 font-medium">{{ $team->invite_expires_at->diffForHumans() }}</span>
+                            ({{ $team->invite_expires_at->format('d/m/Y H:i') }})
+                        </p>
+                        <form action="{{ route('teams.regenerateInvite', ['team_id' => $team->id]) }}" method="POST" onsubmit="return confirm('Gerar novo link? O anterior deixará de funcionar.')">
+                            @csrf
+                            <button type="submit" class="text-xs text-yellow-400 hover:text-yellow-300 transition">
+                                <i class="fas fa-sync-alt mr-1"></i> Gerar Novo Link
+                            </button>
+                        </form>
+                    </div>
+                @else
+                    <div class="p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+                        <p class="text-sm text-red-400 mb-3">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            O link de convite expirou
+                        </p>
+                        <form action="{{ route('teams.regenerateInvite', ['team_id' => $team->id]) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition duration-200 text-sm">
+                                <i class="fas fa-sync-alt mr-2"></i> Gerar Novo Link
+                            </button>
+                        </form>
+                    </div>
+                @endif
+            </div>
+        </x-v5-card>
+
+        <script>
+            function copyInviteLink() {
+                const input = document.getElementById('inviteLink');
+                const button = document.getElementById('copyButtonText');
+
+                input.select();
+                input.setSelectionRange(0, 99999);
+
+                navigator.clipboard.writeText(input.value).then(() => {
+                    button.textContent = 'Copiado!';
+                    setTimeout(() => {
+                        button.textContent = 'Copiar';
+                    }, 2000);
+                }).catch(() => {
+                    document.execCommand('copy');
+                    button.textContent = 'Copiado!';
+                    setTimeout(() => {
+                        button.textContent = 'Copiar';
+                    }, 2000);
+                });
+            }
+        </script>
+
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <x-v5-card title="Gerir Membros">
-                <x-slot name="action">
-                    <x-v5-button size="sm" variant="secondary" onclick="window.location.href='{{ route('teams.AddUser', ['user_id' => $team->id]) }}'">
-                        <i class="fas fa-plus mr-2"></i> Adicionar
-                    </x-v5-button>
-                </x-slot>
-                
                 <x-v5-table :headers="['Nome', 'Email', 'Ações']">
-                    @foreach ($users as $user)
+                    @forelse ($users as $user)
                         <tr class="hover:bg-dark-border/30 transition duration-200">
                             <td class="px-6 py-4 text-white">{{ $user->user_name ?? "--" }}</td>
                             <td class="px-6 py-4 text-dark-muted">{{ $user->user_email ?? "--" }}</td>
-                            <td class="px-6 py-4">
-                                <a href="{{ route('teams.removerUser', ['user_id' => $user->id]) }}" class="text-red-400 hover:text-red-300 transition">
-                                    <i class="fas fa-trash"></i>
+                            <td class="px-6 py-4 text-right">
+                                <a href="{{ route('teams.removerUser', ['user_id' => $user->id]) }}"
+                                   onclick="return confirm('Remover {{ $user->user_name }} da equipa?')"
+                                   class="text-red-400 hover:text-red-300 transition">
+                                    <i class="fas fa-user-times"></i>
                                 </a>
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="3" class="px-6 py-8 text-center text-dark-muted opacity-50 italic">
+                                Nenhum membro nesta equipa. Partilhe o link de convite acima.
+                            </td>
+                        </tr>
+                    @endforelse
                 </x-v5-table>
             </x-v5-card>
 

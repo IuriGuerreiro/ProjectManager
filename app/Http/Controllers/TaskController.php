@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use App\Models\Project;
+use App\Models\Users;
 use Illuminate\Http\Request;
 use App\Models\PmStatus;
 use App\Models\Taskusers;
@@ -62,8 +63,9 @@ class TaskController extends Controller
                             ->get();
 
         $projects = Project::all();
+        $users = Users::all();
 
-        return view('tasks.create', ['projects' => $projects, 'PmStatus' => $PmStatus]);
+        return view('tasks.create', ['projects' => $projects, 'PmStatus' => $PmStatus, 'users' => $users]);
     }
     public function update(Request $request, $id){
         $task = Task::findOrFail($id);
@@ -93,6 +95,15 @@ class TaskController extends Controller
         $task->description = $request->inputTaskDescription;
         $task->project_id = $request->inputTaskProjectId;
         $task->save();
+
+        if($request->inputTaskUsers != null){
+            foreach($request->inputTaskUsers as $user_id){
+                $taskUser = new Taskusers();
+                $taskUser->task_id = $task->id;
+                $taskUser->user_id = $user_id;
+                $taskUser->save();
+            }
+        }
 
         return redirect()->route('tasks.view', ['id' => $task->id]); 
     }

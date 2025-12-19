@@ -49,8 +49,14 @@ class TeamProjectController extends Controller
                         })
                         ->get();
 
+        $existingTeams = Teams::join('teams_projects', 'teams.id', '=', 'teams_projects.team_id')
+                            ->where('teams_projects.project_id', $id)
+                            ->where('teams_projects.deleted_at', null)
+                            ->select('teams.*', 'teams_projects.id as pivot_id')
+                            ->get();
 
-        return view('projects.AddProjectToTeam', ['project' => $project, 'teams' => $teams]);
+
+        return view('projects.addProjectToTeam', ['project' => $project, 'teams' => $teams, 'existingTeams' => $existingTeams]);
     }
 
 

@@ -23,21 +23,24 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Left Column: Users -->
         <x-v5-card title="Membros da Equipa">
-            <x-slot name="action">
-                <x-v5-button size="sm" variant="secondary" onclick="window.location.href='{{ route('teams.AddUser', ['user_id' => $team->id]) }}'">
-                    <i class="fas fa-user-plus mr-2"></i> Adicionar
-                </x-v5-button>
-            </x-slot>
 
-            <x-v5-table :headers="['Nome', 'Email']">
+            <x-v5-table :headers="['Nome', 'Email', 'Ações']">
                 @forelse ($users as $user)
                     <tr class="hover:bg-dark-border/30 transition duration-200">
                         <td class="px-6 py-4 font-medium text-white">{{ $user->user_name ?? "--" }}</td>
                         <td class="px-6 py-4 text-dark-muted">{{ $user->user_email ?? "--" }}</td>
+                        <td class="px-6 py-4 text-right">
+                            <a href="{{ route('teams.removerUser', ['user_id' => $user->id]) }}"
+                               onclick="return confirm('Remover {{ $user->user_name }} da equipa?')"
+                               class="text-dark-muted hover:text-red-400 transition"
+                               title="Remover membro">
+                                <i class="fas fa-user-times"></i>
+                            </a>
+                        </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="2" class="px-6 py-8 text-center text-dark-muted opacity-50 italic">
+                        <td colspan="3" class="px-6 py-8 text-center text-dark-muted opacity-50 italic">
                             Nenhum membro nesta equipa.
                         </td>
                     </tr>
