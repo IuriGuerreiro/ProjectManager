@@ -13,6 +13,7 @@ use App\Http\Controllers\TrainingsController;
 use App\Http\Controllers\FormersController;
 use App\Http\Controllers\TrainingUserscontroller;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\OnboardingController;
 use Illuminate\Support\Facades\Route;
 
 // Public route - redirects to login if not authenticated
@@ -20,8 +21,17 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-// Protected routes - require authentication and email verification
-Route::middleware(['auth', 'verified'])->group(function () {
+// Onboarding routes - require auth but not onboarding completion
+Route::middleware(['auth', 'verified'])->prefix('onboarding')->group(function () {
+    Route::get('/step1', [OnboardingController::class, 'step1'])->name('onboarding.step1');
+    Route::post('/step1', [OnboardingController::class, 'processStep1'])->name('onboarding.processStep1');
+    Route::get('/step2', [OnboardingController::class, 'step2'])->name('onboarding.step2');
+    Route::post('/step2', [OnboardingController::class, 'processStep2'])->name('onboarding.processStep2');
+    Route::get('/skip', [OnboardingController::class, 'skip'])->name('onboarding.skip');
+});
+
+// Protected routes - require authentication, email verification, and completed onboarding
+Route::middleware(['auth', 'verified', 'onboarding'])->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');

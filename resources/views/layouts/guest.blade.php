@@ -1,57 +1,38 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>{{ config('app.name', 'SGP') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=inter:400,500,600&display=swap" rel="stylesheet" />
 
-        <!-- Bootstrap CSS -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-        <style>
-            body {
-                background-color: #333333;
-                min-height: 100vh;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            .auth-card {
-                background-color: white;
-                border-radius: 8px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                padding: 2rem;
-                max-width: 450px;
-                width: 100%;
-            }
-            .logo {
-                text-align: center;
-                font-weight: 700;
-                font-size: 2rem;
-                color: #1C1C1C;
-                margin-bottom: 2rem;
-            }
-        </style>
+        <!-- Scripts -->
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body>
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-6">
-                    <div class="auth-card">
-                        <div class="logo">SGP</div>
-                        {{ $slot }}
-                    </div>
+    <body class="font-sans antialiased bg-dark-bg text-dark-text min-h-screen flex items-center justify-center p-6">
+        <div class="w-full max-w-md">
+            <div class="text-center mb-10">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-primary-600 rounded-2xl shadow-lg shadow-blue-900/50 mb-4">
+                    <span class="text-2xl font-bold text-white">P</span>
                 </div>
+                <h1 class="text-3xl font-bold text-white tracking-tight">ProjectMgr</h1>
+                <p class="text-dark-muted mt-2 text-sm">Sistema de Gestão de Projetos e Formações</p>
+            </div>
+
+            <x-v5-card>
+                {{ $slot }}
+            </x-v5-card>
+
+            <div class="text-center mt-8">
+                <p class="text-xs text-dark-muted">
+                    &copy; {{ date('Y') }} SGP. Todos os direitos reservados.
+                </p>
             </div>
         </div>
-
-        <!-- Bootstrap JS -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

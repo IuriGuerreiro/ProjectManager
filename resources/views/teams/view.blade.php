@@ -1,95 +1,79 @@
 @extends('layouts.app')
-@section('content')
-    <div class="container">
-        <div class="mt-5">
-            <div class="card">
-                <div class="card-header">
-                    Ver projeto
-                    <span class="float-end">
-                        <a href="{{ Route('teams.edit', ['team_id'=>$team->id]) }}" class="text-sucess ml-auto"><i class="fa-solid fa-edit"></i></a>
-                    </span>
-                </div>
-                <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6 mb-6">
-                                <label for="inputProjectStatus">estado</label>
-                                <span class="form-control">{{ $team->team_designation }}</span>
-                            </div>
-                            <div class="col-md-6 mb-6">
-                                <label for="inputProjectDescription">descrição do projeto</label>
-                                <span class="form-control">{{ $team->team_function }}</span>
-                            </div>
-                            <div class="container">
-                                <div class="mt-5">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            Ver utilizadores da equipa
-                                        </div>
-                                        <div class="card-body">
-                                            <table {{-- id="datatable-Automatic" --}} class="object-table table table-sm table-bordered table-striped" style="width: 100%">
-                                                <thead class="thead-light">
-                                                    <tr>
-                                                        <th>
-                                                            @Lang('name')
-                                                        </th>
-                                                        <th>
-                                                            @Lang('email')
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($users as $user)
-                                                    <tr>
-                                                        <td>{{ $user->user_name ?? '--'}}</td>
-                                                        <td>{{ $user->user_email ?? '--'}}</td>
-                                                    </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <div class="container">
-                                <div class="mt-5">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            Ver projetos da equipa
-                                        </div>
-                                        <div class="card-body">
-                                            <table {{-- id="datatable-Automatic" --}} class="object-table table table-sm table-bordered table-striped" style="width: 100%">
-                                                <thead class="thead-light">
-                                                    <tr>
-                                                        <th>
-                                                            @Lang('Designação do projeto')
-                                                        </th>
-                                                        <th>
-                                                            @Lang('Estado do projeto')
-                                                        </th>
-                                                        <th>
-                                                            @Lang('Descrição do projeto')
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($projects as $project)
-                                                    <tr>
-                                                        <td>{{ $project->project_designation}}</td>
-                                                        <td>{{ $project->project_status}}</td>
-                                                        <td>{{ $project->project_description}}</td>
-                                                    </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    <a type="button "class="btn btn-secondary float-end m-3" title="voltar a pagina anterior" href="{{ Route('projects.list')}}"><i class="fa-solid fa-arrow-left"></i></a></td>
-                </div>
+@section('title', 'Detalhes da Equipa')
+
+@section('content')
+    <div class="flex justify-between items-center mb-8">
+        <div class="flex items-center gap-4">
+            <a href="{{ route('teams.list') }}" class="w-10 h-10 rounded-full bg-dark-surface border border-dark-border flex items-center justify-center text-dark-muted hover:text-white transition">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div>
+                <h1 class="text-2xl font-bold text-white tracking-tight">{{ $team->team_designation }}</h1>
+                <p class="text-dark-muted text-sm mt-1">{{ $team->team_function }}</p>
             </div>
         </div>
+        <div class="flex gap-3">
+             <x-v5-button variant="secondary" onclick="window.location.href='{{ route('teams.edit', ['team_id' => $team->id]) }}'">
+                <i class="fas fa-edit mr-2"></i> Editar
+            </x-v5-button>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Left Column: Users -->
+        <x-v5-card title="Membros da Equipa">
+            <x-slot name="action">
+                <x-v5-button size="sm" variant="secondary" onclick="window.location.href='{{ route('teams.AddUser', ['user_id' => $team->id]) }}'">
+                    <i class="fas fa-user-plus mr-2"></i> Adicionar
+                </x-v5-button>
+            </x-slot>
+
+            <x-v5-table :headers="['Nome', 'Email']">
+                @forelse ($users as $user)
+                    <tr class="hover:bg-dark-border/30 transition duration-200">
+                        <td class="px-6 py-4 font-medium text-white">{{ $user->user_name ?? "--" }}</td>
+                        <td class="px-6 py-4 text-dark-muted">{{ $user->user_email ?? "--" }}</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="2" class="px-6 py-8 text-center text-dark-muted opacity-50 italic">
+                            Nenhum membro nesta equipa.
+                        </td>
+                    </tr>
+                @endforelse
+            </x-v5-table>
+        </x-v5-card>
+
+        <!-- Right Column: Projects -->
+        <x-v5-card title="Projetos Atribuídos">
+            <x-slot name="action">
+                <x-v5-button size="sm" variant="secondary" onclick="window.location.href='{{ route('teams.addTeamToProject', ['team_id' => $team->id]) }}'">
+                    <i class="fas fa-folder-plus mr-2"></i> Atribuir
+                </x-v5-button>
+            </x-slot>
+
+            <x-v5-table :headers="['Projeto', 'Estado']">
+                @forelse ($projects as $project)
+                    <tr class="hover:bg-dark-border/30 transition duration-200">
+                        <td class="px-6 py-4">
+                            <div class="font-medium text-white">{{ $project->project_designation }}</div>
+                            <div class="text-xs text-dark-muted mt-0.5">{{ \Str::limit($project->project_description, 30) }}</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-dark-bg text-dark-muted border border-dark-border">
+                                {{ $project->project_status }}
+                            </span>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="2" class="px-6 py-8 text-center text-dark-muted opacity-50 italic">
+                            Nenhum projeto atribuído.
+                        </td>
+                    </tr>
+                @endforelse
+            </x-v5-table>
+        </x-v5-card>
     </div>
 @endsection

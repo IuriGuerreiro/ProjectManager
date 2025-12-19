@@ -1,52 +1,60 @@
 @extends('layouts.app')
+
+@section('title', 'Criar Formação')
+
 @section('content')
-    <div class="container">
-        <div class="mt-5">
-            <div class="card">
-                <div class="card-header">
-                    criar formação
+    <div class="flex items-center gap-4 mb-8">
+        <a href="{{ route('trainings.list') }}" class="w-10 h-10 rounded-full bg-dark-surface border border-dark-border flex items-center justify-center text-dark-muted hover:text-white transition">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1 class="text-2xl font-bold text-white tracking-tight">Nova Formação</h1>
+    </div>
+
+    <div class="max-w-4xl">
+        <x-v5-card>
+            <form action="{{ route('trainings.store') }}" method="POST" class="space-y-6">
+                @csrf
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <x-v5-label for="inputTrainingDesignation" value="Designação da Formação" />
+                        <x-v5-input id="inputTrainingDesignation" name="inputTrainingDesignation" placeholder="Ex: Workshop Laravel" required />
+                    </div>
+                    <div>
+                        <x-v5-label for="inputTrainingCode" value="Acrónimo / Código" />
+                        <x-v5-input id="inputTrainingCode" name="inputTrainingCode" placeholder="Ex: LW-2024" required />
+                    </div>
                 </div>
-                <div class="card-body">
-                    <form action="{{ route('trainings.store') }}" method="POST" enctype="multipart/form-data"class="form-group">
-                        @csrf 
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label for="inputTrainingDesignation">
-                                    Designação da formação
-                                </label>
-                                <input class="form-control" type="text" id="inputTrainingDesignation"name="inputTrainingDesignation" placeholder="Designação da formação" value="{{old('inputProjectDesignation')}}" REQUIRED autocomplete="off">
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="inputTrainingCode">
-                                    Acrónimo da formação
-                                </label>
-                                <input class="form-control" type="text" id="inputTrainingCode"name="inputTrainingCode" placeholder="Acrónimo da formação" value="{{old('inputProjectAcronimo')}}" REQUIRED autocomplete="off">
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="inputTrainingStatus" > estado da formação</label>
-                                <select class="form-control" name="inputTrainingStatus" id="inputTrainingStatus" >
-                                    @foreach($PmStatus as $status)
-                                        <option value="{{$status->status_designation}}">{{$status->status_designation}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 mb-3">
-                                <label for="inputTrainingUser[]"> Users for training</label>
-                                <div class="form-control">
-                                    @foreach($users as $user)
-                                        <input type="checkbox" name="inputTrainingUser[]" id="inputTrainingUser[]" value="{{ $user->id }} "> {{ $user->name }}
-                                        <br>
-                                    @endforeach
+
+                <div>
+                    <x-v5-label for="inputTrainingStatus" value="Estado da Formação" />
+                    <select id="inputTrainingStatus" name="inputTrainingStatus" class="block w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg text-sm text-white focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all duration-200">
+                        @foreach($PmStatus as $status)
+                            <option value="{{$status->status_designation}}">{{$status->status_designation}}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <x-v5-label value="Selecionar Participantes (Utilizadores)" />
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-dark-bg rounded-xl border border-dark-border max-h-60 overflow-y-auto">
+                        @foreach($users as $user)
+                            <label class="flex items-center space-x-3 p-3 rounded-lg border border-dark-border hover:bg-dark-surface transition cursor-pointer group">
+                                <input type="checkbox" name="inputTrainingUser[]" value="{{ $user->id }}" class="rounded bg-dark-bg border-dark-border text-primary-600 focus:ring-primary-500 focus:ring-offset-dark-surface transition">
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-medium text-white group-hover:text-primary-400 transition">{{ $user->name }}</span>
+                                    <span class="text-xs text-dark-muted">{{ $user->email }}</span>
                                 </div>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary float-end mt-3">Registrar</button>
-                    </form>
-                    <a type="button "class="btn btn-secondary float-end m-3" title="voltar a pagina anterior" href="{{ Route('projects.list')}}"><i class="fa-solid fa-arrow-left"></i></a></td>
+                            </label>
+                        @endforeach
+                    </div>
                 </div>
-            </div>
-        </div>
+
+                <div class="flex justify-end pt-4">
+                    <x-v5-button type="submit">
+                        <i class="fas fa-save mr-2"></i> Criar Formação
+                    </x-v5-button>
+                </div>
+            </form>
+        </x-v5-card>
     </div>
 @endsection

@@ -1,44 +1,48 @@
 @extends('layouts.app')
+
+@section('title', 'Adicionar Formador')
+
 @section('content')
-    <div class="container">
-        <div class="mt-5">
-            <div class="card">
-                <div class="card-header">
-                    criar formação
+    <div class="flex items-center gap-4 mb-8">
+        <a href="{{ route('formers.list') }}" class="w-10 h-10 rounded-full bg-dark-surface border border-dark-border flex items-center justify-center text-dark-muted hover:text-white transition">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1 class="text-2xl font-bold text-white tracking-tight">Novo Formador</h1>
+    </div>
+
+    <div class="max-w-4xl">
+        <x-v5-card title="Dados do Formador">
+            <form action="{{ route('formers.store') }}" method="POST" class="space-y-6">
+                @csrf
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <x-v5-label for="inputFormerName" value="Nome Completo" />
+                        <x-v5-input id="inputFormerName" name="inputFormerName" placeholder="Ex: João Silva" required />
+                    </div>
+                    <div>
+                        <x-v5-label for="inputFormerEmail" value="Email Profissional" />
+                        <x-v5-input id="inputFormerEmail" name="inputFormerEmail" type="email" placeholder="Ex: joao.silva@empresa.com" required />
+                    </div>
                 </div>
-                <div class="card-body">
-                    <form action="{{ route('formers.store') }}" method="POST" enctype="multipart/form-data"class="form-group">
-                        @csrf 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="inputFormerName">
-                                     Nome do formador
-                                </label>
-                                <input class="form-control" type="text" id="inputFormerName"name="inputFormerName" placeholder="Nome do formador" value="{{old('inputProjectDesignation')}}" REQUIRED autocomplete="off">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="inputFormerEmail">
-                                    Email do formador
-                                </label>
-                                <input class="form-control" type="text" id="inputFormerEmail"name="inputFormerEmail" placeholder="Email do formador" value="{{old('inputProjectAcronimo')}}" REQUIRED autocomplete="off">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 mb-3">
-                                <label for="inputFormerTrainings[]">Formações para o formador</label>
-                                <div class="form-control">
-                                    @foreach($trainings as $training)
-                                        <input type="checkbox" name="inputFormerTrainings[]" id="inputFormerTrainings[]" value="{{ $training->id }} "> {{ $training->trainings_designation }}
-                                        <br>
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary float-end mt-3">Registrar</button>
-                    </form>
-                    <a type="button "class="btn btn-secondary float-end m-3" title="voltar a pagina anterior" href="{{ Route('projects.list')}}"><i class="fa-solid fa-arrow-left"></i></a></td>
+
+                <div>
+                    <x-v5-label value="Atribuir a Formações" />
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-dark-bg rounded-xl border border-dark-border max-h-60 overflow-y-auto">
+                        @foreach($trainings as $training)
+                            <label class="flex items-center space-x-3 p-3 rounded-lg border border-dark-border hover:bg-dark-surface transition cursor-pointer group">
+                                <input type="checkbox" name="inputFormerTrainings[]" value="{{ $training->id }}" class="rounded bg-dark-bg border-dark-border text-primary-600 focus:ring-primary-500 focus:ring-offset-dark-surface transition">
+                                <span class="text-sm text-dark-muted group-hover:text-white transition">{{ $training->trainings_designation }}</span>
+                            </label>
+                        @endforeach
+                    </div>
                 </div>
-            </div>
-        </div>
+
+                <div class="flex justify-end pt-4">
+                    <x-v5-button type="submit">
+                        <i class="fas fa-save mr-2"></i> Registrar Formador
+                    </x-v5-button>
+                </div>
+            </form>
+        </x-v5-card>
     </div>
 @endsection

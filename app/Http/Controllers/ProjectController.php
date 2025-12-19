@@ -31,11 +31,11 @@ class ProjectController extends Controller
                             ->orWhere('status_destination','projetos')
                             ->get();
 
-        $teams = Teams_Projects::select('Teams_Projects.*', 'teams.team_designation', 'teams.team_function')
+        $teams = Teams_Projects::select('teams_projects.*', 'teams.team_designation', 'teams.team_function')
 
-                                ->join('teams', 'teams.id', 'Teams_Projects.team_id')
+                                ->join('teams', 'teams.id', 'teams_projects.team_id')
 
-                                ->where('Teams_Projects.project_id', $id)
+                                ->where('teams_projects.project_id', $id)
 
                                 ->get();
 
@@ -47,11 +47,11 @@ class ProjectController extends Controller
 
     public function view($id){
         $project = Project::findOrFail($id);
-        $teams = Teams_Projects::select('Teams_Projects.*', 'teams.team_designation', 'teams.team_function')
+        $teams = Teams_Projects::select('teams_projects.*', 'teams.team_designation', 'teams.team_function')
 
-                                ->join('teams', 'teams.id', 'Teams_Projects.team_id')
+                                ->join('teams', 'teams.id', 'teams_projects.team_id')
 
-                                ->where('Teams_Projects.project_id', $id)
+                                ->where('teams_projects.project_id', $id)
 
                                 ->get();
 

@@ -1,43 +1,40 @@
 @extends('layouts.app')
+
+@section('title', 'Adicionar Participantes')
+
 @section('content')
-    <div class="container">
-        <div class="mt-5">
-            <div class="card">
-                <div class="card-header">
-                    Adicionar utilizadores á formação
-                </div>
-                <div class="card-body">
-                    <form action="{{Route('trainings.storeUsers', ['training_id' => $training->id])}}" method="POST" enctype="multipart/form-data" class="form-group">
-                        @csrf 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="inputProjectDesignation">
-                                    codigo da formaçao
-                                </label>
-                                <span class="form-control">{{ $training->trainings_code }}</span>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="inputProjectAcronimo">
-                                    designação da formaçao
-                                </label>
-                                <span class="form-control">{{ $training->trainings_designation }}</span>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12 mb-3">
-                                    <label for="inputTrainingUser[]"> Users for training</label>
-                                    <div class="form-control">
-                                        @foreach($users as $user)
-                                            <input type="checkbox" name="inputTrainingUser[]" id="inputTrainingUser[]" value="{{ $user->users_id }} "> {{ $user->name }}
-                                            <br>
-                                        @endforeach
-                                    </div>
+    <div class="flex items-center gap-4 mb-8">
+        <a href="{{ route('trainings.view', ['training_id' => $training->id]) }}" class="w-10 h-10 rounded-full bg-dark-surface border border-dark-border flex items-center justify-center text-dark-muted hover:text-white transition">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1 class="text-2xl font-bold text-white tracking-tight">Inscrever Utilizadores</h1>
+    </div>
+
+    <div class="max-w-4xl">
+        <x-v5-card title="Inscrição: {{ $training->trainings_designation }}">
+            <form action="{{ route('trainings.storeUsers', ['training_id' => $training->id]) }}" method="POST" class="space-y-6">
+                @csrf
+                <div>
+                    <x-v5-label value="Selecione os utilizadores para inscrever" />
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-dark-bg rounded-xl border border-dark-border max-h-96 overflow-y-auto">
+                        @foreach($users as $user)
+                            <label class="flex items-center space-x-3 p-3 rounded-lg border border-dark-border hover:bg-dark-surface transition cursor-pointer group">
+                                <input type="checkbox" name="inputTrainingUser[]" value="{{ $user->users_id }}" class="rounded bg-dark-bg border-dark-border text-primary-600 focus:ring-primary-500 focus:ring-offset-dark-surface transition">
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-medium text-white group-hover:text-primary-400 transition">{{ $user->name }}</span>
+                                    <span class="text-xs text-dark-muted">{{ $user->email }}</span>
                                 </div>
-                            </div>
-                        <button type="submit" class="btn btn-primary float-end mt-3">adiconar</button>
-                    </form>
-                    <a type="button "class="btn btn-secondary float-end m-3" title="voltar a pagina anterior" href="{{ Route('trainings.list')}}"><i class="fa-solid fa-arrow-left"></i></a></td>
+                            </label>
+                        @endforeach
+                    </div>
                 </div>
-            </div>
-        </div>
+
+                <div class="flex justify-end pt-4">
+                    <x-v5-button type="submit">
+                        <i class="fas fa-user-plus mr-2"></i> Confirmar Inscrições
+                    </x-v5-button>
+                </div>
+            </form>
+        </x-v5-card>
     </div>
 @endsection

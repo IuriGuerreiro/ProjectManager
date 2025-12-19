@@ -1,116 +1,81 @@
 @extends('layouts.app')
-@section('content')
-    <div class="container">
-        <div class="mt-5">
-            <div class="card">
-                <div class="card-header">
-                    Editar a equipa
-                </div>
-                <div class="card-body">
-                    <form action="{{ Route('teams.update', ['team_id'=>$team->id])}}" method="POST">
-                    @csrf 
-                            <div class="row">
-                                <div class="col-md-6 mb-6">
-                                    <label for="inputTeamDesignation">Designação da equipa</label>
-                                    <input class="form-control" id="inputTeamDesignation" name="inputTeamDesignation" placeholder="{{ $team->team_designation }}" >
-                                </div>
-                                <div class="col-md-6 mb-6">
-                                    <label for="inputTeamfunction">Função da equipa</label>
-                                    <input class="form-control" id="inputTeamfunction" name="inputTeamfunction" placeholder="{{ $team->team_function }}" >
-                                </div>
-                                <div class="container">
-                                    <div class="mt-5">
-                                        <div class="card">
-                                            <div class="card-header">
-                                                Ver utilizadores da equipa
-                                                <span class="float-end">
-                                                    <a href="{{ route('teams.AddUser', ['user_id'=>$team->id])}}" class="text-sucess ml-auto"><i class="fa-solid fa-plus"></i></a>
-                                                </span>
-                                            </div>
-                                            <div class="card-body">
-                                                <table {{-- id="datatable-Automatic" --}} class="object-table table table-sm table-bordered table-striped" style="width: 100%">
-                                                    <thead class="thead-light">
-                                                        <tr>
-                                                            <th class="actions text-center px-0 sorting_disabled">
-                                                                <i class="fas fa-tools text-black"></i>
-                                                            </th>
-                                                            <th>
-                                                                @Lang('name')
-                                                            </th>
-                                                            <th>
-                                                                @Lang('email')
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach ($users as $user)
-                                                        <tr>
-                                                            <td>
-                                                                <a class="text-info ml-auto" href="{{ Route('users.view', ['id'=>$user->id])}}"><i class="fa-solid fa-eye"></i></a>
-                                                                <a class="text-danger ml-auto"href="{{ Route( 'teams.removerUser', ['user_id'=> $user->id] ) }}"><i class="fa-solid fa-trash"></i></a>
-                                                            </td>
-                                                            <td>{{ $user->user_name ?? '--'}}</td>
-                                                            <td>{{ $user->user_email ?? '--'}}</td>
-                                                        </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <div class="container">
-                                    <div class="mt-5">
-                                        <div class="card">
-                                            <div class="card-header">
-                                                Ver projetos da equipa
-                                                <span class="float-end">
-                                                    <a href="{{ route('teams.addTeamToProject', ['team_id'=>$team->id])}}" class="text-sucess ml-auto"><i class="fa-solid fa-plus"></i></a>
-                                                </span>
-                                            </div>
-                                            <div class="card-body">
-                                                <table {{-- id="datatable-Automatic" --}} class="object-table table table-sm table-bordered table-striped" style="width: 100%">
-                                                    <thead class="thead-light">
-                                                        <tr>
-                                                        <th class="actions text-center px-0 sorting_disabled">
-                                                                <i class="fas fa-tools text-black"></i>
-                                                            </th>
-                                                            <th>
-                                                                @Lang('Designação do projeto')
-                                                            </th>
-                                                            <th>
-                                                                @Lang('Estado do projeto')
-                                                            </th>
-                                                            <th>
-                                                                @Lang('Descrição do projeto')
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach ($projects as $project)
-                                                        <tr>
-                                                            <td>
-                                                                <a class="text-info ml-auto" href="{{ Route('projects.view', ['id'=>$project->id])}}"><i class="fa-solid fa-eye"></i></a>
-                                                                <a class="text-danger ml-auto"href="{{ Route( 'teams.removeProject', ['Teams_project_id'=> $project->id] ) }}"><i class="fa-solid fa-trash"></i></a>
-                                                            </td>
-                                                            <td>{{ $project->project_designation}}</td>
-                                                            <td>{{ $project->project_status}}</td>
-                                                            <td>{{ $project->project_description}}</td>
-                                                        </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary float-end mt-3">Atualizar</button>
-                        </form>
-                    <a type="button "class="btn btn-secondary float-end m-3" title="voltar a pagina anterior" href="{{ Route('teams.list')}}"><i class="fa-solid fa-arrow-left"></i></a></td>
+@section('title', 'Editar Equipa')
+
+@section('content')
+    <div class="flex items-center gap-4 mb-8">
+        <a href="{{ route('teams.list') }}" class="w-10 h-10 rounded-full bg-dark-surface border border-dark-border flex items-center justify-center text-dark-muted hover:text-white transition">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1 class="text-2xl font-bold text-white tracking-tight">Editar Equipa</h1>
+    </div>
+
+    <div class="space-y-8">
+        <x-v5-card title="Informações da Equipa">
+            <form action="{{ route('teams.update', ['team_id' => $team->id]) }}" method="POST" class="space-y-6">
+                @csrf
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <x-v5-label for="inputTeamDesignation" value="Designação da Equipa" />
+                        <x-v5-input id="inputTeamDesignation" name="inputTeamDesignation" value="{{ $team->team_designation }}" />
+                    </div>
+                    <div>
+                        <x-v5-label for="inputTeamfunction" value="Função da Equipa" />
+                        <x-v5-input id="inputTeamfunction" name="inputTeamfunction" value="{{ $team->team_function }}" />
+                    </div>
                 </div>
-            </div>
+                <div class="flex justify-end">
+                    <x-v5-button type="submit">
+                        <i class="fas fa-sync-alt mr-2"></i> Atualizar
+                    </x-v5-button>
+                </div>
+            </form>
+        </x-v5-card>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <x-v5-card title="Gerir Membros">
+                <x-slot name="action">
+                    <x-v5-button size="sm" variant="secondary" onclick="window.location.href='{{ route('teams.AddUser', ['user_id' => $team->id]) }}'">
+                        <i class="fas fa-plus mr-2"></i> Adicionar
+                    </x-v5-button>
+                </x-slot>
+                
+                <x-v5-table :headers="['Nome', 'Email', 'Ações']">
+                    @foreach ($users as $user)
+                        <tr class="hover:bg-dark-border/30 transition duration-200">
+                            <td class="px-6 py-4 text-white">{{ $user->user_name ?? "--" }}</td>
+                            <td class="px-6 py-4 text-dark-muted">{{ $user->user_email ?? "--" }}</td>
+                            <td class="px-6 py-4">
+                                <a href="{{ route('teams.removerUser', ['user_id' => $user->id]) }}" class="text-red-400 hover:text-red-300 transition">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </x-v5-table>
+            </x-v5-card>
+
+            <x-v5-card title="Gerir Projetos">
+                <x-slot name="action">
+                    <x-v5-button size="sm" variant="secondary" onclick="window.location.href='{{ route('teams.addTeamToProject', ['team_id' => $team->id]) }}'">
+                        <i class="fas fa-plus mr-2"></i> Adicionar
+                    </x-v5-button>
+                </x-slot>
+
+                <x-v5-table :headers="['Projeto', 'Estado', 'Ações']">
+                    @foreach ($projects as $project)
+                        <tr class="hover:bg-dark-border/30 transition duration-200">
+                            <td class="px-6 py-4 text-white">{{ $project->project_designation }}</td>
+                            <td class="px-6 py-4 text-dark-muted">{{ $project->project_status }}</td>
+                            <td class="px-6 py-4">
+                                <a href="{{ route('teams.removeProject', ['Teams_project_id' => $project->id]) }}" class="text-red-400 hover:text-red-300 transition">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </x-v5-table>
+            </x-v5-card>
         </div>
     </div>
 @endsection

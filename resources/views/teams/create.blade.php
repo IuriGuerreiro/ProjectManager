@@ -1,33 +1,35 @@
 @extends('layouts.app')
+
+@section('title', 'Criar Equipa')
+
 @section('content')
-    <div class="container">
-        <div class="mt-5">
-            <div class="card">
-                <div class="card-header">
-                    criar projeto
+    <div class="flex items-center gap-4 mb-8">
+        <a href="{{ route('teams.list') }}" class="w-10 h-10 rounded-full bg-dark-surface border border-dark-border flex items-center justify-center text-dark-muted hover:text-white transition">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1 class="text-2xl font-bold text-white tracking-tight">Criar Nova Equipa</h1>
+    </div>
+
+    <div class="max-w-2xl">
+        <x-v5-card>
+            <form action="{{ route('teams.store') }}" method="POST" class="space-y-6">
+                @csrf
+                <div>
+                    <x-v5-label for="inputTeamDesignation" value="Designação da Equipa" />
+                    <x-v5-input id="inputTeamDesignation" name="inputTeamDesignation" placeholder="Ex: Equipa de Desenvolvimento" required />
                 </div>
-                <div class="card-body">
-                    <form action="{{ route('teams.store') }}" method="POST" enctype="multipart/form-data"class="form-group">
-                        @csrf 
-                        <div class="row">
-                            <div class="col-md-6 mb-6">
-                                <label for="inputTeamDesignation">
-                                    Designação da equipa
-                                </label>
-                                <input class="form-control" type="text" id="inputTeamDesignation"name="inputTeamDesignation" placeholder="Designação da equipa" value="{{old('inputTeamDesignation')}}" REQUIRED autocomplete="off">
-                            </div>
-                            <div class="col-md-6 mb-6">
-                                <label for="inputTeamFunction">
-                                    função da equipa
-                                </label>
-                                <input class="form-control" type="text" id="inputTeamfunction"name="inputTeamfunction" placeholder="função da equipa" value="{{old('inputTeamfunction')}}" REQUIRED autocomplete="off">
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary float-end mt-3">criar</button>
-                    </form>
-                    <a type="button "class="btn btn-secondary float-end m-3" title="voltar a pagina anterior" href="{{ Route('projects.list')}}"><i class="fa-solid fa-arrow-left"></i></a></td>
+
+                <div>
+                    <x-v5-label for="inputTeamfunction" value="Função da Equipa" />
+                    <x-v5-input id="inputTeamfunction" name="inputTeamfunction" placeholder="Ex: Desenvolvimento Backend e API" required />
                 </div>
-            </div>
-        </div>
+
+                <div class="flex justify-end pt-4">
+                    <x-v5-button type="submit">
+                        <i class="fas fa-save mr-2"></i> Criar Equipa
+                    </x-v5-button>
+                </div>
+            </form>
+        </x-v5-card>
     </div>
 @endsection

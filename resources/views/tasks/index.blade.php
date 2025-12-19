@@ -1,58 +1,54 @@
-@extends('layouts.app')
-@section('content')
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-12 mt-5">
-                <div class="card">
-                    <div class="card-header">
-                        lista de tarefas
-                        <span class="float-end">
-                           <a href="{{Route('tasks.create')}}" class="text-sucess ml-auto"><i class="fa-solid fa-plus"></i></a>
-                        </span>
-                    </div>
-                    <div class="card-body table-responsive">
-                        <table {{-- id="datatable-Automatic" --}} class="object-table table table-sm table-bordered table-striped" style="width: 100%">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th class="actions text-center px-0 sorting_disabled">
-                                        <i class="fas fa-tools text-black"></i>
-                                    </th>
-                                    <th>
-                                        @Lang('codigo')
-                                    </th>
-                                    <th>
-                                        @Lang('designação')
-                                    </th>
-                                    <th>
-                                        @lang('estado')
-                                    </th>
-                                    <th>
-                                        @Lang('descrição')
-                                    </th>
-                                    <th>
-                                        @Lang('nome do projeto')
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($tasks as $task)
-                                 <tr>
-                                    <td>
-                                        <a class="text-info ml-auto"href="{{ Route('tasks.view', ['id'=>$task->id])}}"><i class="fa-solid fa-eye"></i></a>
-                                        <a class="text-warning ml-auto" href="{{ Route('tasks.edit', ['id'=>$task->id])}}"><i class="fa-regular fa-pen-to-square"></i></a>
-                                        <a class="text-danger ml-auto"href="{{ Route('tasks.delete', ['id'=>$task->id]) }}"><i class="fa-solid fa-trash"></i></a></td>
-                                    <td>{{ $task->task_code ?? '--'}}</td>
-                                    <td>{{ $task->task_designation ?? '--'}}</td>
-                                    <td>{{ $task->task_status ?? '--'}}</td>
-                                    <td>{{ \Str::limit($task-> description,30) ?? '--'}}</td>
-                                    <td><a href="{{ Route('tasks.listbyProject', ['project_id' => $task->project_id]) }}" class="text-sucess ml-auto">{{ $task->project_designation ?? '--'}}</a></td>
-                                 </tr>
-                                 @endforeach
-                            </tbody>
-                        </table>
-                  </div>
-                </div>
-            </div>
+@extends("layouts.app")
+
+@section("title", "Tarefas")
+
+@section("content")
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-white tracking-tight">Tarefas</h1>
+            <p class="text-dark-muted text-sm mt-1">Lista global de todas as tarefas em todos os projetos.</p>
         </div>
+        <x-v5-button onclick="window.location.href='{{ route('tasks.create') }}'">
+            <i class="fas fa-plus mr-2"></i> Nova Tarefa
+        </x-v5-button>
     </div>
+
+    <x-v5-card>
+        <x-v5-table :headers="['Código', 'Tarefa', 'Estado', 'Projeto', 'Ações']">
+            @foreach ($tasks as $task)
+                <tr class="hover:bg-dark-border/30 transition duration-200">
+                    <td class="px-6 py-4">
+                        <span class="font-mono text-xs text-primary-400 bg-primary-500/10 px-2 py-1 rounded border border-primary-500/20">
+                            {{ $task->task_code ?? "--" }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="font-medium text-white">{{ $task->task_designation ?? "--" }}</div>
+                        <div class="text-xs text-dark-muted mt-0.5">{{ \Str::limit($task->description, 40) ?? "--" }}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-dark-bg text-dark-muted border border-dark-border">
+                            {{ $task->task_status ?? "--" }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="{{ route('tasks.listbyProject', ['project_id' => $task->project_id]) }}" class="text-primary-400 hover:text-primary-300 transition text-sm">
+                            {{ $task->project_designation ?? "--" }}
+                        </a>
+                    </td>
+                    <td class="px-6 py-4 text-right space-x-2">
+                        <a href="{{ route('tasks.view', ['id' => $task->id]) }}" class="text-dark-muted hover:text-primary-400 transition">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="{{ route('tasks.edit', ['id' => $task->id]) }}" class="text-dark-muted hover:text-yellow-400 transition">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{{ route('tasks.delete', ['id' => $task->id]) }}" onclick="return confirm('Tem a certeza?')" class="text-dark-muted hover:text-red-400 transition">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            @endforeach
+        </x-v5-table>
+    </x-v5-card>
 @endsection
