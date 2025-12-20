@@ -9,6 +9,7 @@ use App\Models\Teams;
 use App\Models\Teams_Projects;
 use App\Models\TasksUsers;
 use App\Models\Task;
+use Illuminate\Support\Facades\Auth;
 
 
 class ProjectController extends Controller
@@ -16,7 +17,15 @@ class ProjectController extends Controller
     use SoftDeletes;
 
     public function index(){
-        $projects = Project::all();
+        $projects = Project::whereIn('id', function($query) {
+            $query->select('project_id')
+                ->from('teams_projects')
+                ->whereIn('team_id', function($subQuery) {
+                    $subQuery->select('team_id')
+                        ->from('teams_users')
+                        ->where('user_id', Auth::id());
+                });
+        })->get();
 
         return view('projects.index', ['projects' => $projects]);
     }
@@ -77,7 +86,11 @@ class ProjectController extends Controller
                             ->orWhere('status_destination','projetos')
                             ->get();
 
-        $teams = Teams::all();
+        $teams = Teams::whereIn('id', function($query) {
+            $query->select('team_id')
+                ->from('teams_users')
+                ->where('user_id', Auth::id());
+        })->get();
 
         return view('projects.create', ['PmStatus' => $PmStatus, 'teams' => $teams]);
     }
@@ -121,5 +134,19 @@ class ProjectController extends Controller
         $project->save();
 
         return redirect()->route('projects.view', ['id'=>$project->id]);
+    }
+
+    public function getProjectUsers($id) {
+        $users = \App\Models\Users::whereIn('id', function($query) use ($id) {
+            $query->select('user_id')
+                ->from('teams_users')
+                ->whereIn('team_id', function($subQuery) use ($id) {
+                    $subQuery->select('team_id')
+                        ->from('teams_projects')
+                        ->where('project_id', $id);
+                });
+        })->get(['id', 'name', 'email']);
+
+        return response()->json($users);
     }
 }

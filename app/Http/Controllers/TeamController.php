@@ -99,10 +99,19 @@ class TeamController extends Controller
 
         $team = Teams::findOrFail($id);
 
-        $users = Users::wherenotIn('users.id', function($query) use ($id){
-                        $query->select('team_id')
+        $users = Users::whereIn('id', function($query) {
+                        $query->select('user_id')
                             ->from('teams_users')
-                            ->where('teams_users.team_id', $id);
+                            ->whereIn('team_id', function($subQuery) {
+                                $subQuery->select('team_id')
+                                    ->from('teams_users')
+                                    ->where('user_id', Auth::id());
+                            });
+                        })
+                        ->whereNotIn('id', function($query) use ($id){
+                            $query->select('user_id')
+                                ->from('teams_users')
+                                ->where('team_id', $id);
                         })
                         ->get();
 

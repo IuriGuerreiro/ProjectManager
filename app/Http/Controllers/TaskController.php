@@ -8,6 +8,7 @@ use App\Models\Users;
 use Illuminate\Http\Request;
 use App\Models\PmStatus;
 use App\Models\Taskusers;
+use Illuminate\Support\Facades\Auth;
 
 
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -20,6 +21,15 @@ class TaskController extends Controller
     public function index(){
         $tasks = Task::select('tasks.*', 'projects.project_designation')
                     ->join('projects', 'tasks.project_id', '=', 'projects.id')
+                    ->whereIn('projects.id', function($query) {
+                        $query->select('project_id')
+                            ->from('teams_projects')
+                            ->whereIn('team_id', function($subQuery) {
+                                $subQuery->select('team_id')
+                                    ->from('teams_users')
+                                    ->where('user_id', Auth::id());
+                            });
+                    })
                     ->get();
     
         return view('tasks.index', ['tasks' => $tasks]);
@@ -62,8 +72,25 @@ class TaskController extends Controller
                             ->orWhere('status_destination','projetos')
                             ->get();
 
-        $projects = Project::all();
-        $users = Users::all();
+        $projects = Project::whereIn('id', function($query) {
+            $query->select('project_id')
+                ->from('teams_projects')
+                ->whereIn('team_id', function($subQuery) {
+                    $subQuery->select('team_id')
+                        ->from('teams_users')
+                        ->where('user_id', Auth::id());
+                });
+        })->get();
+        
+        $users = Users::whereIn('id', function($query) {
+            $query->select('user_id')
+                ->from('teams_users')
+                ->whereIn('team_id', function($subQuery) {
+                    $subQuery->select('team_id')
+                        ->from('teams_users')
+                        ->where('user_id', Auth::id());
+                });
+        })->get();
 
         return view('tasks.create', ['projects' => $projects, 'PmStatus' => $PmStatus, 'users' => $users]);
     }
@@ -112,6 +139,15 @@ class TaskController extends Controller
         $tasks= Task::where('tasks.project_id', '=', $project_id)
             ->select('tasks.*', 'projects.project_designation')
             ->join('projects', 'tasks.project_id', 'projects.id')
+            ->whereIn('projects.id', function($query) {
+                $query->select('project_id')
+                    ->from('teams_projects')
+                    ->whereIn('team_id', function($subQuery) {
+                        $subQuery->select('team_id')
+                            ->from('teams_users')
+                            ->where('user_id', Auth::id());
+                    });
+            })
             ->get();
 
 

@@ -9,6 +9,7 @@ use App\Models\Users;
 use App\Models\TrainingUsers;
 use App\Models\TrainingFormers;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 class TrainingsController extends Controller
 {
@@ -48,7 +49,16 @@ class TrainingsController extends Controller
                             ->orWhere('status_destination','formação')
                             ->get();
         
-        $users = Users::all();
+        $users = Users::whereIn('id', function($query) {
+            $query->select('user_id')
+                ->from('teams_users')
+                ->whereIn('team_id', function($subQuery) {
+                    $subQuery->select('team_id')
+                        ->from('teams_users')
+                        ->where('user_id', Auth::id());
+                });
+        })->get();
+
         return view('trainings.create',['PmStatus' => $PmStatus, 'users' => $users]);
     }
 

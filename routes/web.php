@@ -50,6 +50,7 @@ Route::middleware(['auth', 'verified', 'onboarding'])->group(function () {
         Route::post('/update/{id}', [ProjectController::class, 'update'])->name('projects.update');
         Route::get('/view/{id}', [ProjectController::class, 'view'])->name('projects.view');
         Route::get('/delete/{id}', [ProjectController::class, 'delete'])->name('projects.delete');
+        Route::get('/{id}/users', [ProjectController::class, 'getProjectUsers'])->name('projects.users');
     });
 
     // Tasks

@@ -69,6 +69,26 @@ class Users extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Get the teams for the user.
+     */
+    public function teams()
+    {
+        return $this->belongsToMany(Teams::class, 'teams_users', 'user_id', 'team_id')
+                    ->withTimestamps();
+    }
+
+    /**
+     * Get the projects for the user through teams.
+     */
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class, 'teams_projects', 'team_id', 'project_id', 'id', 'id')
+                    ->join('teams_users', 'teams_projects.team_id', '=', 'teams_users.team_id')
+                    ->where('teams_users.user_id', $this->id)
+                    ->distinct();
+    }
+
+    /**
      * Check if user has any of the given roles.
      */
     public function hasAnyRole($roles)
