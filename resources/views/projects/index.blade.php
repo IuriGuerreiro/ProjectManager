@@ -27,17 +27,13 @@
                         <div class="text-xs text-dark-muted mt-1">{{ \Str::limit($project->description, 50) ?? "--" }}</div>
                     </td>
                     <td class="px-6 py-4">
-                        @php
-                            $statusClass = match($project->project_status) {
-                                "Concluído" => "bg-green-500/10 text-green-400 border-green-500/20",
-                                "Em Curso" => "bg-blue-500/10 text-blue-400 border-blue-500/20",
-                                "Pendente" => "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
-                                default => "bg-dark-bg text-dark-muted border-dark-border"
-                            };
-                        @endphp
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border {{ $statusClass }}">
-                            {{ $project->project_status ?? "--" }}
-                        </span>
+                        <select onchange="updateProjectStatus({{ $project->id }}, this.value)" class="bg-dark-bg text-xs border border-dark-border rounded px-2 py-1 text-white focus:ring-primary-500 focus:border-primary-500 block w-full">
+                            @foreach($statuses as $status)
+                                <option value="{{ $status->status_designation }}" {{ $project->project_status == $status->status_designation ? 'selected' : '' }}>
+                                    {{ $status->status_designation }}
+                                </option>
+                            @endforeach
+                        </select>
                     </td>
                     <td class="px-6 py-4">
                         <div class="flex -space-x-2">
@@ -61,4 +57,26 @@
             @endforeach
         </x-v5-table>
     </x-v5-card>
+
+    <script>
+        function updateProjectStatus(id, newStatus) {
+            fetch(`/Project/${id}/update-status`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ status: newStatus })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Optional: show a toast or highlight success
+                } else {
+                    alert('Error updating status');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
 @endsection

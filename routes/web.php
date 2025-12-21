@@ -53,6 +53,7 @@ Route::middleware(['auth', 'verified', 'onboarding'])->group(function () {
         Route::get('/view/{id}', [ProjectController::class, 'view'])->name('projects.view');
         Route::get('/delete/{id}', [ProjectController::class, 'delete'])->name('projects.delete');
         Route::get('/{id}/users', [ProjectController::class, 'getProjectUsers'])->name('projects.users');
+        Route::post('/{id}/update-status', [ProjectController::class, 'updateStatus'])->name('projects.updateStatus');
     });
 
     // Tasks
@@ -62,6 +63,7 @@ Route::middleware(['auth', 'verified', 'onboarding'])->group(function () {
         Route::post('/store', [TaskController::class, 'store'])->name('tasks.store');
         Route::get('/edit/{id}', [TaskController::class, 'edit'])->name('tasks.edit');
         Route::post('/update/{id}', [TaskController::class, 'update'])->name('tasks.update');
+        Route::post('/{id}/update-status', [TaskController::class, 'updateStatus'])->name('tasks.updateStatus');
         Route::get('/view/{id}', [TaskController::class, 'view'])->name('tasks.view');
         Route::get('/delete/{id}', [TaskController::class, 'delete'])->name('tasks.delete');
         Route::get('/listProject/{project_id}', [TaskController::class, 'listByProject'])->name('tasks.listbyProject');
@@ -77,28 +79,28 @@ Route::middleware(['auth', 'verified', 'onboarding'])->group(function () {
         Route::get('/trainings/remove/{id}', [TaskTrainingsController::class, 'remove'])->name('tasks.removeTraining');
     });
 
-    // Users
-    Route::prefix('users')->group(function () {
-        Route::get('/', [UserController::class, 'index'])->name('users.list');
-        Route::get('/create', [UserController::class, 'create'])->name('users.create');
-        Route::post('/store', [UserController::class, 'store'])->name('users.store');
-        Route::get('/edit/{id}', [UserController::class, 'edit'])->name('users.edit');
-        Route::post('/update/{id}', [UserController::class, 'update'])->name('users.update');
-        Route::get('/view/{id}', [UserController::class, 'view'])->name('users.view');
-        Route::get('/delete/{id}', [UserController::class, 'delete'])->name('users.delete');
-        Route::get('/listProject/{project_id}', [TaskController::class, 'listByProject'])->name('users.listbyProject');
+    // Users - DISABLED
+    // Route::prefix('users')->group(function () {
+    //     Route::get('/', [UserController::class, 'index'])->name('users.list');
+    //     Route::get('/create', [UserController::class, 'create'])->name('users.create');
+    //     Route::post('/store', [UserController::class, 'store'])->name('users.store');
+    //     Route::get('/edit/{id}', [UserController::class, 'edit'])->name('users.edit');
+    //     Route::post('/update/{id}', [UserController::class, 'update'])->name('users.update');
+    //     Route::get('/view/{id}', [UserController::class, 'view'])->name('users.view');
+    //     Route::get('/delete/{id}', [UserController::class, 'delete'])->name('users.delete');
+    //     Route::get('/listProject/{project_id}', [TaskController::class, 'listByProject'])->name('users.listbyProject');
 
-        // Task assignments
-        Route::get('/AdduserToTask/{project_id}', [TasksUsersController::class, 'AddToTask'])->name('users.AddToTask');
-        Route::post('/AddTaskTouser/Store/{project_id}', [TasksUsersController::class, 'store'])->name('users.storeToTasks');
-        Route::get('/removeTaskTouser/{id}', [TasksUsersController::class, 'remove'])->name('users.removeFromTask');
-        Route::get('/removeuserToTask/{id}', [TasksUsersController::class, 'remove'])->name('users.removeuserToTask');
+    //     // Task assignments
+    //     Route::get('/AdduserToTask/{project_id}', [TasksUsersController::class, 'AddToTask'])->name('users.AddToTask');
+    //     Route::post('/AddTaskTouser/Store/{project_id}', [TasksUsersController::class, 'store'])->name('users.storeToTasks');
+    //     Route::get('/removeTaskTouser/{id}', [TasksUsersController::class, 'remove'])->name('users.removeFromTask');
+    //     Route::get('/removeuserToTask/{id}', [TasksUsersController::class, 'remove'])->name('users.removeuserToTask');
 
-        // Role management
-        Route::get('/addrole{user_id}', [RoleController::class, 'addRole'])->name('users.addRole');
-        Route::post('/addrole/store/{user_id}', [RoleController::class, 'storeRole'])->name('users.storeRole');
-        Route::get('/removeRole/{id}', [RoleController::class, 'removeRole'])->name('users.removeRole');
-    });
+    //     // Role management
+    //     Route::get('/addrole{user_id}', [RoleController::class, 'addRole'])->name('users.addRole');
+    //     Route::post('/addrole/store/{user_id}', [RoleController::class, 'storeRole'])->name('users.storeRole');
+    //     Route::get('/removeRole/{id}', [RoleController::class, 'removeRole'])->name('users.removeRole');
+    // });
 
     // Teams
     Route::prefix('teams')->group(function () {

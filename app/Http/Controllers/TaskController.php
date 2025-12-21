@@ -18,9 +18,12 @@ class TaskController extends Controller
 
     use SoftDeletes;
 
-    public function index(){
+    public function index(Request $request){
+        // Get search query
+        $search = $request->get('search');
+
         // Get only top-level tasks (no parent) with their project info
-        $tasks = Task::select('tasks.*', 'projects.project_designation')
+        $query = Task::select('tasks.*', 'projects.project_designation')
                     ->join('projects', 'tasks.project_id', '=', 'projects.id')
                     ->whereNull('tasks.parent_task_id') // Only top-level tasks
                     ->whereIn('projects.id', function($query) {
@@ -31,11 +34,45 @@ class TaskController extends Controller
                                     ->from('teams_users')
                                     ->where('user_id', Auth::id());
                             });
-                    })
+                    });
+
+        // Apply search filter
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('tasks.task_designation', 'LIKE', "%{$search}%")
+                  ->orWhere('tasks.task_code', 'LIKE', "%{$search}%")
+                  ->orWhere('tasks.description', 'LIKE', "%{$search}%")
+                  ->orWhere('projects.project_designation', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $tasks = $query->orderByRaw("CASE
+                        WHEN tasks.task_status = 'Em Curso' THEN 1
+                        WHEN tasks.task_status = 'Em Pausa' THEN 2
+                        WHEN tasks.task_status = 'Pendente' THEN 3
+                        WHEN tasks.task_status = 'A Fazer' THEN 4
+                        WHEN tasks.task_status = 'Concluído' THEN 5
+                        ELSE 6
+                    END")
+                    ->orderBy('tasks.created_at', 'desc')
                     ->with($this->getNestedSubtasks())
                     ->get();
 
-        return view('tasks.index', ['tasks' => $tasks]);
+        $statuses = PmStatus::all();
+
+        return view('tasks.index', ['tasks' => $tasks, 'statuses' => $statuses, 'search' => $search]);
+    }
+
+    public function updateStatus(Request $request, $id) {
+        $request->validate([
+            'status' => 'required|string'
+        ]);
+
+        $task = Task::findOrFail($id);
+        $task->task_status = $request->status;
+        $task->save();
+
+        return response()->json(['success' => true, 'message' => 'Status updated successfully']);
     }
 
     /**
@@ -61,7 +98,12 @@ class TaskController extends Controller
                                             ->where('task_users.task_id', $task->id)
                                             ->get();
 
-        return view('tasks.edit', ['task' => $task, 'PmStatus' => $PmStatus, 'projects'=>$projects, 'users' => $users]);
+        $potentialParents = Task::select('tasks.*', 'projects.project_designation')
+                                ->join('projects', 'tasks.project_id', '=', 'projects.id')
+                                ->where('tasks.id', '!=', $id)
+                                ->get();
+
+        return view('tasks.edit', ['task' => $task, 'PmStatus' => $PmStatus, 'projects'=>$projects, 'users' => $users, 'potentialParents' => $potentialParents]);
     }
 
     public function delete($id){
@@ -145,8 +187,18 @@ class TaskController extends Controller
                                 })
                                 ->get();
 
-        // Get all trainings for selection
-        $trainings = \App\Models\Trainings::all();
+        // Get trainings from user's teams
+        $trainings = \App\Models\Trainings::whereIn('id', function($query) {
+            $query->select('training_id')
+                ->from('training_teams')
+                ->whereNull('training_teams.deleted_at')
+                ->whereIn('team_id', function($subQuery) {
+                    $subQuery->select('team_id')
+                        ->from('teams_users')
+                        ->where('user_id', Auth::id())
+                        ->whereNull('teams_users.deleted_at');
+                });
+        })->get();
 
         return view('tasks.create', [
             'projects' => $projects,
@@ -189,6 +241,11 @@ class TaskController extends Controller
         }
         if($request->inputTaskProjectId != null){
             $task->project_id = $request->inputTaskProjectId;
+        }
+
+        // Update parent task
+        if($request->has('inputParentTaskId')){
+            $task->parent_task_id = $request->inputParentTaskId ?: null;
         }
 
         // Update completion percentage

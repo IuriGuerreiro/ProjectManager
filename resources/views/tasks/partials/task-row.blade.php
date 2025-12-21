@@ -27,9 +27,13 @@
         </span>
     </td>
     <td class="px-6 py-4">
-        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-dark-bg text-dark-muted border border-dark-border">
-            {{ $task->task_status ?? "--" }}
-        </span>
+        <select onchange="updateTaskStatus({{ $task->id }}, this.value)" class="bg-dark-bg text-xs border border-dark-border rounded px-2 py-1 text-white focus:ring-primary-500 focus:border-primary-500 block w-full">
+            @foreach($statuses as $status)
+                <option value="{{ $status->status_designation }}" {{ $task->task_status == $status->status_designation ? 'selected' : '' }}>
+                    {{ $status->status_designation }}
+                </option>
+            @endforeach
+        </select>
     </td>
     <td class="px-6 py-4">
         @if(isset($task->project_designation))
@@ -39,14 +43,6 @@
         @else
             <span class="text-dark-muted text-sm">{{ $task->project->project_designation ?? "--" }}</span>
         @endif
-    </td>
-    <td class="px-6 py-4">
-        <div class="flex items-center gap-2">
-            <div class="w-20 bg-dark-border rounded-full h-1.5">
-                <div class="bg-primary-500 h-1.5 rounded-full transition-all" style="width: {{ $task->completion_percentage }}%"></div>
-            </div>
-            <span class="text-xs text-dark-muted">{{ number_format($task->completion_percentage, 0) }}%</span>
-        </div>
     </td>
     <td class="px-6 py-4 text-right space-x-2">
         <a href="{{ route('tasks.view', ['id' => $task->id]) }}" class="text-dark-muted hover:text-primary-400 transition" title="Ver Detalhes">

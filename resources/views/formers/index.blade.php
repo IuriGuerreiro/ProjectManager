@@ -28,7 +28,7 @@
                     <td class="px-6 py-4 text-dark-muted text-sm">{{ $former->email ?? "--" }}</td>
                     <td class="px-6 py-4">
                         <span class="text-xs bg-dark-bg px-2 py-1 rounded border border-dark-border text-dark-muted">
-                            {{ $former->add ?? '0' }}
+                            {{ $former->trainings_count ?? '0' }}
                         </span>
                     </td>
                     <td class="px-6 py-4 text-right space-x-2">

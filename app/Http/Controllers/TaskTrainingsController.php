@@ -20,8 +20,19 @@ class TaskTrainingsController extends Controller
     {
         $task = Task::findOrFail($task_id);
 
-        // Get trainings not already required
-        $availableTrainings = Trainings::whereNotIn('id', function($query) use ($task_id) {
+        // Get trainings from user's teams that are not already required
+        $availableTrainings = Trainings::whereIn('id', function($query) {
+                                  $query->select('training_id')
+                                        ->from('training_teams')
+                                        ->whereNull('training_teams.deleted_at')
+                                        ->whereIn('team_id', function($subQuery) {
+                                            $subQuery->select('team_id')
+                                                ->from('teams_users')
+                                                ->where('user_id', auth()->id())
+                                                ->whereNull('teams_users.deleted_at');
+                                        });
+                              })
+                              ->whereNotIn('id', function($query) use ($task_id) {
                                   $query->select('training_id')
                                         ->from('task_trainings')
                                         ->where('task_id', $task_id)

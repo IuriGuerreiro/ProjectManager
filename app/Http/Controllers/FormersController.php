@@ -14,7 +14,7 @@ class FormersController extends Controller
 {
     public function list(){
         // Only show formers from user's teams
-        $formers = Formers::whereIn('id', function($query) {
+        $formers = Formers::withCount('trainings')->whereIn('id', function($query) {
             $query->select('former_id')
                 ->from('former_teams')
                 ->whereIn('team_id', function($subQuery) {
@@ -31,10 +31,12 @@ class FormersController extends Controller
         $trainings = Trainings::whereIn('id', function($query) {
             $query->select('training_id')
                 ->from('training_teams')
+                ->whereNull('training_teams.deleted_at')
                 ->whereIn('team_id', function($subQuery) {
                     $subQuery->select('team_id')
                         ->from('teams_users')
-                        ->where('user_id', Auth::id());
+                        ->where('user_id', Auth::id())
+                        ->whereNull('teams_users.deleted_at');
                 });
         })->get();
 
@@ -42,7 +44,8 @@ class FormersController extends Controller
         $teams = Teams::whereIn('id', function($query) {
             $query->select('team_id')
                 ->from('teams_users')
-                ->where('user_id', Auth::id());
+                ->where('user_id', Auth::id())
+                ->whereNull('teams_users.deleted_at');
         })->get();
 
         return view('formers.create', ['trainings' => $trainings, 'teams' => $teams]);

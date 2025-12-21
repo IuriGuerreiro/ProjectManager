@@ -26,8 +26,22 @@ class ProjectController extends Controller
                         ->where('user_id', Auth::id());
                 });
         })->get();
+        
+        $statuses = PmStatus::all();
 
-        return view('projects.index', ['projects' => $projects]);
+        return view('projects.index', ['projects' => $projects, 'statuses' => $statuses]);
+    }
+
+    public function updateStatus(Request $request, $id) {
+        $request->validate([
+            'status' => 'required|string'
+        ]);
+
+        $project = Project::findOrFail($id);
+        $project->project_status = $request->status;
+        $project->save();
+
+        return response()->json(['success' => true, 'message' => 'Status updated successfully']);
     }
 
 

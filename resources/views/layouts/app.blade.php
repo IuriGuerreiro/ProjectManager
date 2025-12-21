@@ -36,9 +36,6 @@
                             <x-v5-nav-link href="{{ route('tasks.list') }}" :active="request()->routeIs('tasks.*')" icon="fas fa-check-square">
                                 Tarefas
                             </x-v5-nav-link>
-                            <x-v5-nav-link href="{{ route('users.list') }}" :active="request()->routeIs('users.*')" icon="fas fa-users">
-                                Utilizadores
-                            </x-v5-nav-link>
                             <x-v5-nav-link href="{{ route('teams.list') }}" :active="request()->routeIs('teams.*')" icon="fas fa-user-group">
                                 Equipas
                             </x-v5-nav-link>
