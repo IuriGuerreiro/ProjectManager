@@ -6,6 +6,8 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProjectUsersController;
 use App\Http\Controllers\TasksUsersController;
+use App\Http\Controllers\TaskDependenciesController;
+use App\Http\Controllers\TaskTrainingsController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TeamProjectController;
@@ -63,6 +65,16 @@ Route::middleware(['auth', 'verified', 'onboarding'])->group(function () {
         Route::get('/view/{id}', [TaskController::class, 'view'])->name('tasks.view');
         Route::get('/delete/{id}', [TaskController::class, 'delete'])->name('tasks.delete');
         Route::get('/listProject/{project_id}', [TaskController::class, 'listByProject'])->name('tasks.listbyProject');
+
+        // Task Dependencies
+        Route::get('/dependencies/add/{task_id}', [TaskDependenciesController::class, 'addDependency'])->name('tasks.addDependency');
+        Route::post('/dependencies/store/{task_id}', [TaskDependenciesController::class, 'store'])->name('tasks.storeDependency');
+        Route::get('/dependencies/remove/{id}', [TaskDependenciesController::class, 'remove'])->name('tasks.removeDependency');
+
+        // Task Training Requirements
+        Route::get('/trainings/add/{task_id}', [TaskTrainingsController::class, 'addTraining'])->name('tasks.addTraining');
+        Route::post('/trainings/store/{task_id}', [TaskTrainingsController::class, 'store'])->name('tasks.storeTraining');
+        Route::get('/trainings/remove/{id}', [TaskTrainingsController::class, 'remove'])->name('tasks.removeTraining');
     });
 
     // Users

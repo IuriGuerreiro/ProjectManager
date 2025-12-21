@@ -29,7 +29,7 @@
                     <div>
                         <x-v5-label for="inputTaskStatus" value="Estado" />
                         <select id="inputTaskStatus" name="inputTaskStatus" class="block w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg text-sm text-white focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all duration-200">
-                            @foreach($PmStatus as $status)  
+                            @foreach($PmStatus as $status)
                                 <option value="{{$status->status_designation}}">{{$status->status_designation}}</option>
                             @endforeach
                         </select>
@@ -38,11 +38,24 @@
                         <x-v5-label for="inputTaskProjectId" value="Projeto Associado" />
                         <select id="inputTaskProjectId" name="inputTaskProjectId" onchange="fetchProjectUsers(this.value)" class="block w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg text-sm text-white focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all duration-200">
                             <option value="">Selecione um projeto...</option>
-                            @foreach($projects as $project)  
+                            @foreach($projects as $project)
                                 <option value="{{$project->id}}">{{$project->project_designation}}</option>
                             @endforeach
                         </select>
                     </div>
+                </div>
+
+                <div>
+                    <x-v5-label for="inputParentTaskId" value="Tarefa Pai (opcional)" />
+                    <select id="inputParentTaskId" name="inputParentTaskId" class="block w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg text-sm text-white focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all duration-200">
+                        <option value="">Nenhuma (tarefa de nível superior)</option>
+                        @foreach($potentialParents as $parent)
+                            <option value="{{$parent->id}}" {{ request('parent_id') == $parent->id ? 'selected' : '' }}>
+                                {{$parent->task_designation}} ({{$parent->project_designation}})
+                            </option>
+                        @endforeach
+                    </select>
+                    <p class="text-xs text-dark-muted mt-1">Selecione uma tarefa pai para criar uma subtarefa</p>
                 </div>
 
                 <div>
@@ -56,6 +69,21 @@
                 <div>
                     <x-v5-label for="inputTaskDescription" value="Descrição" />
                     <textarea id="inputTaskDescription" name="inputTaskDescription" rows="4" class="block w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg text-sm text-white placeholder-dark-muted focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all duration-200" placeholder="Detalhes da tarefa..."></textarea>
+                </div>
+
+                <div>
+                    <x-v5-label value="Formações Obrigatórias (opcional)" />
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-dark-bg rounded-xl border border-dark-border max-h-60 overflow-y-auto">
+                        @forelse($trainings as $training)
+                            <label class="flex items-center space-x-3 p-3 rounded-lg border border-dark-border hover:bg-dark-surface transition cursor-pointer group">
+                                <input type="checkbox" name="inputTaskTrainings[]" value="{{ $training->id }}" class="rounded bg-dark-bg border-dark-border text-primary-600 focus:ring-primary-500 focus:ring-offset-dark-surface transition">
+                                <span class="text-sm text-white group-hover:text-primary-400 transition">{{ $training->trainings_designation }}</span>
+                            </label>
+                        @empty
+                            <p class="text-sm text-dark-muted col-span-2 text-center py-4">Nenhuma formação disponível.</p>
+                        @endforelse
+                    </div>
+                    <p class="text-xs text-dark-muted mt-1">Selecione as formações que os utilizadores devem completar</p>
                 </div>
 
                 <div class="flex justify-end pt-4">

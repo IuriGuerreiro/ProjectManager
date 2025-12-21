@@ -58,9 +58,9 @@ class UserController extends Controller
         $user = Users::where('users.id', $id)
                     ->first();
        
-        $projects = Teams_projects::select('Teams_projects.*', 'projects.project_designation', 'projects.project_code')
-                                ->join('projects', 'projects.id', 'Teams_projects.project_id')
-                                ->join('teams_users', 'teams_users.team_id', '=', 'Teams_projects.team_id')
+        $projects = Teams_projects::select('teams_projects.*', 'projects.project_designation', 'projects.project_code')
+                                ->join('projects', 'projects.id', 'teams_projects.project_id')
+                                ->join('teams_users', 'teams_users.team_id', '=', 'teams_projects.team_id')
                                 ->where('teams_users.user_id', $id)
                                 ->get();
         
@@ -88,9 +88,9 @@ class UserController extends Controller
 
         $user = Users::findOrFail($id);
        
-        $projects = Teams_projects::select('Teams_projects.*', 'projects.project_designation', 'projects.project_code')
-                                        ->join('projects', 'projects.id', 'Teams_projects.project_id')
-                                        ->join('teams_users', 'teams_users.team_id', '=', 'Teams_projects.team_id')
+        $projects = Teams_projects::select('teams_projects.*', 'projects.project_designation', 'projects.project_code')
+                                        ->join('projects', 'projects.id', 'teams_projects.project_id')
+                                        ->join('teams_users', 'teams_users.team_id', '=', 'teams_projects.team_id')
                                         ->where('teams_users.user_id', $id) 
                                         ->get();
 

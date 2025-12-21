@@ -6,7 +6,7 @@
     <div class="flex justify-between items-center mb-8">
         <div>
             <h1 class="text-2xl font-bold text-white tracking-tight">Tarefas</h1>
-            <p class="text-dark-muted text-sm mt-1">Lista global de todas as tarefas em todos os projetos.</p>
+            <p class="text-dark-muted text-sm mt-1">Lista hierárquica de todas as tarefas em todos os projetos.</p>
         </div>
         <x-v5-button onclick="window.location.href='{{ route('tasks.create') }}'">
             <i class="fas fa-plus mr-2"></i> Nova Tarefa
@@ -14,41 +14,54 @@
     </div>
 
     <x-v5-card>
-        <x-v5-table :headers="['Código', 'Tarefa', 'Estado', 'Projeto', 'Ações']">
-            @foreach ($tasks as $task)
-                <tr class="hover:bg-dark-border/30 transition duration-200">
-                    <td class="px-6 py-4">
-                        <span class="font-mono text-xs text-primary-400 bg-primary-500/10 px-2 py-1 rounded border border-primary-500/20">
-                            {{ $task->task_code ?? "--" }}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4">
-                        <div class="font-medium text-white">{{ $task->task_designation ?? "--" }}</div>
-                        <div class="text-xs text-dark-muted mt-0.5">{{ \Str::limit($task->description, 40) ?? "--" }}</div>
-                    </td>
-                    <td class="px-6 py-4">
-                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-dark-bg text-dark-muted border border-dark-border">
-                            {{ $task->task_status ?? "--" }}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4">
-                        <a href="{{ route('tasks.listbyProject', ['project_id' => $task->project_id]) }}" class="text-primary-400 hover:text-primary-300 transition text-sm">
-                            {{ $task->project_designation ?? "--" }}
-                        </a>
-                    </td>
-                    <td class="px-6 py-4 text-right space-x-2">
-                        <a href="{{ route('tasks.view', ['id' => $task->id]) }}" class="text-dark-muted hover:text-primary-400 transition">
-                            <i class="fas fa-eye"></i>
-                        </a>
-                        <a href="{{ route('tasks.edit', ['id' => $task->id]) }}" class="text-dark-muted hover:text-yellow-400 transition">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a href="{{ route('tasks.delete', ['id' => $task->id]) }}" onclick="return confirm('Tem a certeza?')" class="text-dark-muted hover:text-red-400 transition">
-                            <i class="fas fa-trash"></i>
-                        </a>
-                    </td>
-                </tr>
-            @endforeach
-        </x-v5-table>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-dark-border">
+                <thead class="bg-dark-surface">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-dark-muted uppercase tracking-wider">Tarefa</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-dark-muted uppercase tracking-wider">Código</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-dark-muted uppercase tracking-wider">Estado</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-dark-muted uppercase tracking-wider">Projeto</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-dark-muted uppercase tracking-wider">Progresso</th>
+                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-dark-muted uppercase tracking-wider">Ações</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-dark-bg divide-y divide-dark-border">
+                    @foreach ($tasks as $task)
+                        @include('tasks.partials.task-row', ['task' => $task, 'level' => 0])
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </x-v5-card>
+
+    <script>
+        function toggleSubtasks(taskId) {
+            const subtaskRows = document.querySelectorAll(`[data-parent-id="${taskId}"]`);
+            const toggleIcon = document.getElementById(`toggle-icon-${taskId}`);
+            const isExpanded = toggleIcon.classList.contains('fa-chevron-down');
+
+            if (isExpanded) {
+                // Collapse
+                toggleIcon.classList.remove('fa-chevron-down');
+                toggleIcon.classList.add('fa-chevron-right');
+                subtaskRows.forEach(row => {
+                    row.classList.add('hidden');
+                    // Also collapse any expanded children
+                    const childTaskId = row.getAttribute('data-task-id');
+                    const childIcon = document.getElementById(`toggle-icon-${childTaskId}`);
+                    if (childIcon && childIcon.classList.contains('fa-chevron-down')) {
+                        toggleSubtasks(childTaskId);
+                    }
+                });
+            } else {
+                // Expand
+                toggleIcon.classList.remove('fa-chevron-right');
+                toggleIcon.classList.add('fa-chevron-down');
+                subtaskRows.forEach(row => {
+                    row.classList.remove('hidden');
+                });
+            }
+        }
+    </script>
 @endsection

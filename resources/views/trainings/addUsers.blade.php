@@ -17,15 +17,29 @@
                 <div>
                     <x-v5-label value="Selecione os utilizadores para inscrever" />
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-dark-bg rounded-xl border border-dark-border max-h-96 overflow-y-auto">
-                        @foreach($users as $user)
+                        @forelse($users as $user)
                             <label class="flex items-center space-x-3 p-3 rounded-lg border border-dark-border hover:bg-dark-surface transition cursor-pointer group">
-                                <input type="checkbox" name="inputTrainingUser[]" value="{{ $user->users_id }}" class="rounded bg-dark-bg border-dark-border text-primary-600 focus:ring-primary-500 focus:ring-offset-dark-surface transition">
+                                <input type="checkbox" name="inputTrainingUser[]" value="{{ $user->id }}" class="rounded bg-dark-bg border-dark-border text-primary-600 focus:ring-primary-500 focus:ring-offset-dark-surface transition">
                                 <div class="flex flex-col">
                                     <span class="text-sm font-medium text-white group-hover:text-primary-400 transition">{{ $user->name }}</span>
                                     <span class="text-xs text-dark-muted">{{ $user->email }}</span>
                                 </div>
                             </label>
-                        @endforeach
+                        @empty
+                            <div class="col-span-2 text-center py-8">
+                                <i class="fas fa-exclamation-circle text-4xl text-dark-muted mb-4"></i>
+                                <p class="text-dark-muted mb-2">Nenhum utilizador disponível</p>
+                                <p class="text-sm text-dark-muted">Certifique-se de que:</p>
+                                <ul class="text-sm text-dark-muted mt-2 space-y-1">
+                                    <li>• A formação tem equipas atribuídas</li>
+                                    <li>• Existem utilizadores nessas equipas</li>
+                                    <li>• Os utilizadores ainda não estão inscritos</li>
+                                </ul>
+                                <a href="{{ route('trainings.edit', ['training_id' => $training->id]) }}" class="inline-block mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition">
+                                    <i class="fas fa-edit mr-2"></i>Editar Formação
+                                </a>
+                            </div>
+                        @endforelse
                     </div>
                 </div>
 
